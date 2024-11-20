@@ -45,7 +45,6 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
         
         // Основной текст
         cell.textLabel?.text = notes[indexPath.row]
-        
         // Подзаголовок для каждой строки
         // cell.detailTextLabel?.text = "Кол-во просмотров: \(pictures[indexPath.row].viewCount)"  // Пример текста подзаголовка
         
@@ -64,6 +63,7 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
             print(note)
             navigationController?.pushViewController(vc, animated: true)
         }
+        tableView.reloadData()
     }
     
     @objc func addNote() {
