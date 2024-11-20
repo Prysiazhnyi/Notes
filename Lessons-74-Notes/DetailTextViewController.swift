@@ -32,7 +32,12 @@ class DetailTextViewController: UIViewController {
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(saveNote))
+        // Создаем две кнопки
+            let saveButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(saveNote))
+            let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+            
+            // Размещаем кнопки в правой части навигационной панели
+            navigationItem.rightBarButtonItems = [saveButton, shareButton]
     }
     
     // Удаляем наблюдателей, чтобы избежать утечек памяти
@@ -68,5 +73,19 @@ class DetailTextViewController: UIViewController {
         print("Detail save -- \(detailText.text)")
        }
     
-    
+    @objc func shareTapped() {
+        guard let note = detailText.text else {
+            print("No note found")
+            return
+        }
+        print(note)
+        // Создаем активити контроллер для обмена заметкой
+        let activityVC = UIActivityViewController(activityItems: [note], applicationActivities: nil)
+        
+        // Убираем дополнительные экшн-контроллеры, если не нужны
+        activityVC.excludedActivityTypes = [.addToReadingList, .postToFacebook]  // Пример, можно убрать эти экшены
+        
+        // Представляем активити-контроллер
+        present(activityVC, animated: true, completion: nil)
+    }
 }

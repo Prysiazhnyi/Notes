@@ -11,6 +11,7 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
     
     var notes = [String]()
     private let notesKey = "notes"
+    //var selectedNote: String?  // Переменная для хранения выбранной заметки
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,7 +19,7 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
         title = "Нотатки"
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNote))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteNote))
+        //navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
         
         DispatchQueue.global().async {
             let defaults = UserDefaults.standard
@@ -27,12 +28,12 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
                 self.notes = decodedLists
             }
             print("Выполнена загрузка по дефолту")
-    }
-    DispatchQueue.main.async {
-        // Сортировка и обновление UI на главном потоке
-       // self.notes.sort
-        self.tableView.reloadData() // Обновление таблицы после завершения загрузки
-    }
+        }
+        DispatchQueue.main.async {
+            // Сортировка и обновление UI на главном потоке
+            // self.notes.sort
+            self.tableView.reloadData() // Обновление таблицы после завершения загрузки
+        }
         
     }
     
@@ -76,20 +77,15 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
     }
     
     // Метод для свайпа и удаления
-        override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-            if editingStyle == .delete {
-                // Удаляем заметку
-                notes.remove(at: indexPath.row)
-
-                // Обновляем таблицу
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-                saveNotesLists()
-            }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Удаляем заметку
+            notes.remove(at: indexPath.row)
+            
+            // Обновляем таблицу
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            saveNotesLists()
         }
-    
-    @objc func deleteNote() {
-      
-        
     }
     
     // MARK: - Реализация делегата
