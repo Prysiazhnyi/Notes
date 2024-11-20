@@ -10,6 +10,7 @@ import UIKit
 class ViewController: UITableViewController, DetailTextViewControllerDelegate {
     
     var notes = [String]()
+    private let notesKey = "notes"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +19,20 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNote))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteNote))
+        
+        DispatchQueue.global().async {
+            let defaults = UserDefaults.standard
+            if let savedData = defaults.data(forKey: self.notesKey),
+               let decodedLists = try? JSONDecoder().decode([String].self, from: savedData) {
+                self.notes = decodedLists
+            }
+            print("Выполнена загрузка по дефолту")
+    }
+    DispatchQueue.main.async {
+        // Сортировка и обновление UI на главном потоке
+       // self.notes.sort
+        self.tableView.reloadData() // Обновление таблицы после завершения загрузки
+    }
         
     }
     
@@ -68,14 +83,13 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
 
                 // Обновляем таблицу
                 tableView.deleteRows(at: [indexPath], with: .automatic)
+                saveNotesLists()
             }
         }
     
     @objc func deleteNote() {
-        if let indexPath = tableView.indexPathForSelectedRow {
-            notes.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-        }
+      
+        
     }
     
     // MARK: - Реализация делегата
@@ -93,6 +107,15 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
         
         // Обновляем таблицу
         tableView.reloadData()
+        saveNotesLists()
+    }
+    
+    func saveNotesLists() {
+        print("save - \(notes)")
+        let defaults = UserDefaults.standard
+        if let encodedData = try? JSONEncoder().encode(notes) {
+            defaults.set(encodedData, forKey: notesKey)
+        }
     }
 }
 
