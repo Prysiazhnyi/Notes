@@ -43,7 +43,8 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailTextViewController {
             
             vc.selectNote = note
-            //vc.delegate = self  // Устанавливаем делегата для обновлений
+            vc.noteIndex = indexPath.row  // Передаем индекс заметки для редактирования
+            vc.delegate = self  // Устанавливаем делегата для обновлений
             print(note)
             navigationController?.pushViewController(vc, animated: true)
         }
@@ -52,20 +53,13 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
     @objc func addNote() {
         print("Add new note")
         
-        let ac = UIAlertController(title: "Введіть назву", message: nil, preferredStyle: .alert)
-        ac.addTextField()
+        let note = [notes]
         
-        let noteAction = UIAlertAction(title: "Зберегти", style: .default) { [weak self, weak ac] action in
-            guard let newNote = ac?.textFields?[0].text, !newNote.isEmpty else { return }
-            
-            // Добавляем новую заметку в массив
-            self?.notes.append(newNote)
-            
-            // Обновляем таблицу
-            self?.tableView.reloadData()
+        if let vc = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailTextViewController {
+            vc.delegate = self  // Устанавливаем делегата для обновлений
+            navigationController?.pushViewController(vc, animated: true)
         }
-        ac.addAction(noteAction)
-        present(ac, animated: true)
+        
     }
     
     
