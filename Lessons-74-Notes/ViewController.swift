@@ -53,8 +53,6 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
     @objc func addNote() {
         print("Add new note")
         
-        let note = [notes]
-        
         if let vc = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailTextViewController {
             vc.delegate = self  // Устанавливаем делегата для обновлений
             navigationController?.pushViewController(vc, animated: true)
@@ -62,6 +60,16 @@ class ViewController: UITableViewController, DetailTextViewControllerDelegate {
         
     }
     
+    // Метод для свайпа и удаления
+        override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+            if editingStyle == .delete {
+                // Удаляем заметку
+                notes.remove(at: indexPath.row)
+
+                // Обновляем таблицу
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+        }
     
     @objc func deleteNote() {
         if let indexPath = tableView.indexPathForSelectedRow {
